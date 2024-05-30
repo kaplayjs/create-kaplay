@@ -8,7 +8,6 @@ import https from "https";
 
 const cwd = process.cwd();
 const c = (n, msg) => `\x1b[${n}m${msg}\x1b[0m`;
-const isWindows = /^win/.test(process.platform);
 
 const fail = (msg, ifHelp) => {
     console.error(c(31, msg));
@@ -159,7 +158,7 @@ const request = async (opt) =>
 
 const exec = async (cmd, args, opts) =>
     new Promise((resolve) => {
-        const proc = cp.spawn(isWindows ? cmd + ".cmd" : cmd, args, opts);
+        const proc = cp.spawn(cmd, args, opts);
         proc.on("exit", resolve);
         proc.on("error", fail);
     });
