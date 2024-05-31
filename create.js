@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const VERSION = "2.6.2";
+const VERSION = "2.6.3";
 
 import cp from "child_process";
 import fs from "fs";
