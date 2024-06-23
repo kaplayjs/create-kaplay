@@ -34,6 +34,7 @@ const optMap = [
     },
     {
         long: "spaces",
+        short: "s",
         value: "level",
         desc: "Use spaces instead of tabs for generated files",
     },
