@@ -75,12 +75,12 @@ ${c(33, "OPTIONS")}
 
 ${c(33, "EXAMPLE")}
 
-  ${c(30, "# quick start with default config")}
+  ${c(90, "# quick start with default config")}
   $ create-kaplay mygame
 
   ${
     c(
-        30,
+        90,
         "# if installed locally you don't need to use -- when passing options",
     )
 }
