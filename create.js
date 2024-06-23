@@ -85,7 +85,7 @@ ${c(33, "EXAMPLE")}
         "# if installed locally you don't need to use -- when passing options",
     )
 }
-  $ create-kaplay -t -s -d burp mygame
+  $ create-kaplay -t -s 4 -d -e burp mygame
 `.trim();
 
 const opts = {};
