@@ -30,7 +30,7 @@ const optMap = [
         long: "example",
         short: "e",
         value: "name",
-        desc: "Start from a example listed on play.kaplayjs.com",
+        desc: "Start from an example listed on play.kaplayjs.com",
     },
     {
         long: "spaces",
