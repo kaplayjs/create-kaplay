@@ -25,6 +25,6 @@ EXAMPLE
   # quick start with default config
   $ create-kaplay mygame
 
-  # if installed locally you don't need to use -- when passing options
+  # calling with options
   $ create-kaplay -t -s 4 -d -e burp mygame
 ```

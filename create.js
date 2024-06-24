@@ -82,7 +82,7 @@ ${c(33, "EXAMPLE")}
   ${
     c(
         90,
-        "# if installed locally you don't need to use -- when passing options",
+        "# calling with options",
     )
 }
   $ create-kaplay -t -s 4 -d -e burp mygame
