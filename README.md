@@ -1,6 +1,6 @@
 # create-kaplay
 
-A script to help you start a kaplay project in no time
+A script to help you start a KAPLAY project in no time
 
 ## EXAMPLE
 ```sh
