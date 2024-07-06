@@ -6,6 +6,8 @@ import cp from "child_process";
 import fs from "fs";
 import https from "https";
 
+const kaplayRepo = `https://raw.githubusercontent.com/marklovers/kaplay/master`
+
 const cwd = process.cwd();
 const c = (n, msg) => `\x1b[${n}m${msg}\x1b[0m`;
 const isWindows = /^win/.test(process.platform);
@@ -175,9 +177,10 @@ const updateJSONFile = (path, action) => {
 };
 
 let startCode = `
-import startGame from "kaplay"
+import kaplay from "kaplay";
+import "kaplay/global";
 
-const k = startGame()
+const k = kaplay()
 
 k.loadSprite("bean", "sprites/bean.png")
 
@@ -189,17 +192,30 @@ k.add([
 k.onClick(() => k.addKaboom(k.mousePos()))
 `.trim();
 
-// TODO: pull assets used by example
+
+const assetsRegex = /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
+
 if (opts["example"]) {
     info(`- fetching example "${opts["example"]}"`);
 
-    const example = await request({
-        hostname: "raw.githubusercontent.com",
-        path: `marklovers/kaplay/master/examples/${opts["example"]}.js`,
-        method: "GET",
-    });
+    const example = await fetch(`${kaplayRepo}/examples/${opts["example"]}.js`);
+    const exampleText = await example.text();
 
-    startCode = "import startGame from \"kaplay\"\n\n" + example.toString().trim();
+    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n" + exampleText;
+}
+
+// get assets
+const folders = [];
+
+for (const match of startCode.matchAll(assetsRegex)) {
+    const [_idk, _type, _name, url] = match;
+
+    if(url.startsWith("/sprites")) continue;
+
+    if(!folders.includes(url.split("/")[2])) {
+        folders.push(url.split("/")[2]);
+    }
+    
 }
 
 const pkgs = [
@@ -226,6 +242,8 @@ const dir = (name, items) => ({
 
 const create = (item) => {
     if (item.type === "dir") {
+        console.log(item.name)
+
         fs.mkdirSync(item.name);
         process.chdir(item.name);
         item.items.forEach(create);
@@ -275,7 +293,6 @@ create(dir(dest, [
 <html>
 <head>
 	<title>${dest}</title>
-	<style>canvas:{display:block}</style>
 </head>
 <body style="overflow:hidden">
 	<script src="main.js"></script>
@@ -284,6 +301,13 @@ create(dir(dest, [
 		`,
         ),
         dir("sprites", []),
+        // TODO: Create this folders if only needed
+        dir("examples", [
+            dir("sprites", []),
+            dir("sounds", []),
+            dir("fonts", []),
+            dir("shaders", [])
+        ]),
     ]),
     dir("src", [
         file(`main.${ext}`, startCode),
@@ -379,11 +403,26 @@ will create distributable native app package
 
 process.chdir(dest);
 
-info("- downloading default sprites");
-await download(
-    "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/bean.png",
-    "www/sprites/bean.png",
-);
+info("- downloading example sprites");
+
+for (const match of startCode.matchAll(assetsRegex)) {
+    const [, type, name, url] = match;
+
+    if(url.startsWith("/sprites")) {
+        info(`- downloading sprite "${name}"`);
+        await download(
+            `${kaplayRepo}/${url}`,
+            `www${url}`,
+        );
+    }
+    else {
+        info(`- downloading ${type.toLowerCase()} "${name}"`);
+        await download(
+            `${kaplayRepo}/${url}`,
+            `www${url}`,
+        )
+    }
+}
 
 info(`- installing packages ${pkgs.map((pkg) => `"${pkg}"`).join(", ")}`);
 await exec("npm", ["install", ...pkgs], {
@@ -398,6 +437,7 @@ await exec("npm", ["install", "-D", ...devPkgs], {
 
 if (desktop) {
     info("- starting tauri project for desktop build");
+
     await exec("npx", [
         "tauri",
         "init",
@@ -415,11 +455,14 @@ if (desktop) {
         "npm run build",
         "--ci",
     ], { stdio: "inherit" });
+
     await download(
         "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
         "www/icon.png",
     );
+
     await exec("npx", ["tauri", "icon", "www/icon.png"], { stdio: "inherit" });
+
     updateJSONFile("src-tauri/tauri.conf.json", (cfg) => {
         cfg.tauri.bundle.identifier = "com.kaplay.dev";
         return cfg;
