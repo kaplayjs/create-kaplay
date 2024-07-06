@@ -1,4 +1,5 @@
-## 1.7.0
+## 2.7.0
 
-- removed scrollbars in generated game
+- remove scrollbars in generated game
 - now `-e` fetchs the sprites from the server
+- fixed examples not being fetched at all
