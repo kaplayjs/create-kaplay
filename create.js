@@ -277,7 +277,7 @@ create(dir(dest, [
 	<title>${dest}</title>
 	<style>canvas:{display:block}</style>
 </head>
-<body>
+<body style="overflow:hidden">
 	<script src="main.js"></script>
 </body>
 </html>
