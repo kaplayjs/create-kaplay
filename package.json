@@ -1,7 +1,7 @@
 {
     "name": "create-kaplay",
     "description": "Start a KAPLAY project in no time",
-    "version": "2.7.0",
+    "version": "2.7.1",
     "license": "MIT",
     "homepage": "https://kaplayjs.com/",
     "repository": "github:marklovers/create-kaplay",
