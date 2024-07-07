@@ -243,8 +243,6 @@ const dir = (name, items) => ({
 
 const create = (item) => {
     if (item.type === "dir") {
-        console.log(item.name)
-
         fs.mkdirSync(item.name);
         process.chdir(item.name);
         item.items.forEach(create);
