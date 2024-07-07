@@ -5,6 +5,7 @@ const VERSION = "2.6.3";
 import cp from "child_process";
 import fs from "fs";
 import https from "https";
+import path from "path";
 
 const kaplayRepo = `https://raw.githubusercontent.com/marklovers/kaplay/master`
 
@@ -412,14 +413,14 @@ for (const match of startCode.matchAll(assetsRegex)) {
         info(`- downloading sprite "${name}"`);
         await download(
             `${kaplayRepo}/${url}`,
-            `www${url}`,
+            path.join("www", url),
         );
     }
     else {
         info(`- downloading ${type.toLowerCase()} "${name}"`);
         await download(
             `${kaplayRepo}/${url}`,
-            `www${url}`,
+            path.join("www", url),
         )
     }
 }
