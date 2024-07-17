@@ -11,3 +11,10 @@ export const packageRunScripts = (script: string) => ({
     "pnpm": `${script}`,
     "bun": `${script}`,
 });
+
+export const packageExecutions = {
+    "npm": `npx`,
+    "yarn": `yarn`,
+    "pnpm": `pnpm`,
+    "bun": `bun`,
+};

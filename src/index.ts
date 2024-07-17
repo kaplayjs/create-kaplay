@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { packageInstalls, packageRunScripts } from "./packageManagers";
+import { packageExecutions, packageInstalls, packageRunScripts } from "./packageManagers";
 
 const VERSION = "2.6.3";
 
@@ -10,6 +10,7 @@ import https from "https";
 import path from "path";
 
 const packageManager = await detect();
+const packageExec = packageExecutions[packageManager];
 const installCmd = packageInstalls[packageManager];
 const devCmd = packageRunScripts("dev")[packageManager];
 
@@ -432,7 +433,7 @@ await exec(packageManager, [installCmd, "-D", ...devPkgs], {
 if (desktop) {
     info("- starting tauri project for desktop build");
 
-    await exec("npx", [
+    await exec(packageExec, [
         "tauri",
         "init",
         "--app-name",
@@ -440,13 +441,13 @@ if (desktop) {
         "--window-title",
         dest,
         "--dist-dir",
-        "../www",
+        "../dist",
         "--dev-path",
         "http://localhost:8000",
         "--before-dev-command",
-        "npm run dev",
+        `${packageManager} run dev`,
         "--before-build-command",
-        "npm run build",
+        `${packageManager} run build`,
         "--ci",
     ], { stdio: "inherit" });
 
@@ -455,7 +456,7 @@ if (desktop) {
         "public/icon.png",
     );
 
-    await exec("npx", ["tauri", "icon", "public/icon.png"], { stdio: "inherit" });
+    await exec(packageExec, ["tauri", "icon", "public/icon.png"], { stdio: "inherit" });
 
     updateJSONFile("src-tauri/tauri.conf.json", (cfg) => {
         cfg.tauri.bundle.identifier = "com.kaplay.dev";
