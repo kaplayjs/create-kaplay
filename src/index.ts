@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { detectAgent } from "@skarab/detect-package-manager";
 import {
+    detectPackageManager,
     packageExecutions,
     packageInstalls,
     packageRunScripts,
@@ -11,9 +11,9 @@ import fs from "fs";
 import https from "https";
 import path from "path";
 
-const VERSION = "2.6.3";
+const VERSION = "3.0.0";
 
-const packageManager = (await detectAgent())?.name ?? "npm";
+const packageManager = detectPackageManager() ?? "npm";
 const packageExec = packageExecutions[packageManager];
 const installCmd = packageInstalls[packageManager];
 const devCmd = packageRunScripts("dev")[packageManager];
