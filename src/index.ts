@@ -26,7 +26,7 @@ const fail = (msg: string, ifHelp?: boolean) => {
     process.exit(1);
 };
 
-const info = (msg) => console.log(c(33, msg));
+const info = (msg: string) => console.log(c(33, msg));
 
 const optMap = [
     { long: "help", short: "h", desc: "Print this message" },
@@ -401,7 +401,7 @@ info("- downloading example sprites");
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
-    if (url.startsWith("sprites") || url.startsWith("/sprites")) {
+    if (url.startsWith("sprites") || url.startsWith("/sprites") || url.startsWith("./sprites")) {
         info(`- downloading sprite "${name}"`);
 
         await download(
@@ -470,5 +470,5 @@ Success! Now
   $ cd ${dest}
   $ ${packageManager} ${devCmd}
 
-and start editing src/main.${ext}!
+and start editing src/main.${ext}! 🦖💥
 `.trim());
