@@ -14,9 +14,9 @@ export const packageInstalls = {
 
 export const packageRunScripts = (script: string) => ({
     "npm": `run ${script}`,
-    "yarn": `run ${script}`,
-    "pnpm": `${script}`,
-    "bun": `${script}`,
+    "yarn": `${script}`,
+    "pnpm": `run ${script}`,
+    "bun": `run ${script}`,
 });
 
 export const packageExecutions = {
