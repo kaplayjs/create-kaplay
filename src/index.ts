@@ -1,15 +1,19 @@
 #!/usr/bin/env node
-import { packageExecutions, packageInstalls, packageRunScripts } from "./packageManagers";
-
-const VERSION = "2.6.3";
+import { detectAgent } from "@skarab/detect-package-manager";
+import {
+    packageExecutions,
+    packageInstalls,
+    packageRunScripts,
+} from "./packageManagers";
 
 import cp from "child_process";
-import { detect } from "detect-package-manager";
 import fs from "fs";
 import https from "https";
 import path from "path";
 
-const packageManager = await detect();
+const VERSION = "2.6.3";
+
+const packageManager = (await detectAgent())?.name ?? "npm";
 const packageExec = packageExecutions[packageManager];
 const installCmd = packageInstalls[packageManager];
 const devCmd = packageRunScripts("dev")[packageManager];
@@ -59,7 +63,9 @@ const optMap = [
 
 // constructing help msg
 const optDisplay = optMap.map((opt) => ({
-    usage: `${opt.short ? `-${opt.short},` : "   "} --${opt.long}${opt.value ? ` <${opt.value}>` : ""}`,
+    usage: `${opt.short ? `-${opt.short},` : "   "} --${opt.long}${
+        opt.value ? ` <${opt.value}>` : ""
+    }`,
     desc: opt.desc,
 }));
 
@@ -75,7 +81,13 @@ ${c(32, "USAGE 🦖")}
 
 ${c(32, "OPTIONS")}
 
-  ${optDisplay.map((opt) => `${c(32, opt.usage)} ${" ".repeat(usageLen - opt.usage.length)} ${opt.desc}`).join("\n  ")}
+  ${
+    optDisplay.map((opt) =>
+        `${c(32, opt.usage)} ${
+            " ".repeat(usageLen - opt.usage.length)
+        } ${opt.desc}`
+    ).join("\n  ")
+}
 
 ${c(32, "EXAMPLE")}
   ${c(90, "# quick start with default config")}
@@ -192,7 +204,8 @@ k.add([
 k.onClick(() => k.addKaboom(k.mousePos()))
 `.trim();
 
-const assetsRegex = /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
+const assetsRegex =
+    /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
 
 if (opts["example"]) {
     info(`- fetching example "${opts["example"]}"`);
@@ -200,7 +213,8 @@ if (opts["example"]) {
     const example = await fetch(`${kaplayRepo}/examples/${opts["example"]}.js`);
     const exampleText = await example.text();
 
-    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n" + exampleText;
+    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n"
+        + exampleText;
 }
 
 // get assets
@@ -402,7 +416,10 @@ info("- downloading example sprites");
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
-    if (url.startsWith("sprites") || url.startsWith("/sprites") || url.startsWith("./sprites")) {
+    if (
+        url.startsWith("sprites") || url.startsWith("/sprites")
+        || url.startsWith("./sprites")
+    ) {
         info(`- downloading sprite "${name}"`);
 
         await download(
@@ -456,7 +473,9 @@ if (desktop) {
         "public/icon.png",
     );
 
-    await exec(packageExec, ["tauri", "icon", "public/icon.png"], { stdio: "inherit" });
+    await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
+        stdio: "inherit",
+    });
 
     updateJSONFile("src-tauri/tauri.conf.json", (cfg) => {
         cfg.tauri.bundle.identifier = "com.kaplay.dev";

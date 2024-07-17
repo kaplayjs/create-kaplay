@@ -1,10 +1,12 @@
 {
+  "lineWidth": 80,
   "typescript": {
     "indentWidth": 4
   },
   "json": {
   },
   "markdown": {
+    "textWrap": "always"
   },
   "toml": {
   },

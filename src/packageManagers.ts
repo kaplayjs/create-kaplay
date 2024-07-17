@@ -16,5 +16,5 @@ export const packageExecutions = {
     "npm": `npx`,
     "yarn": `yarn`,
     "pnpm": `pnpm`,
-    "bun": `bun`,
+    "bun": `bunx`,
 };

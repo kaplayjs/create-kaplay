@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@skarab/detect-package-manager':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@types/node':
         specifier: ^20.14.11
         version: 20.14.11
@@ -391,6 +394,10 @@ packages:
 
   '@rushstack/ts-command-line@4.22.2':
     resolution: {integrity: sha512-xkvrGd6D9dPlI3I401Thc640WNsEPB1sGEmy12a2VJaPQPwhE6Ik0gEVPZJ/2G1w213eaCAdxUY1xpiTulsmpA==}
+
+  '@skarab/detect-package-manager@1.0.0':
+    resolution: {integrity: sha512-CuU1x6LgkJIF+H8FCnKijx6DbWVP1Y7kqPk88LSxNe0ulbe3BZ37qd3AaX3t5vnFZESLFMcjQd2dlPhdvWNSdQ==}
+    engines: {node: '>=14', pnpm: '>=7'}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -1228,6 +1235,8 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
+
+  '@skarab/detect-package-manager@1.0.0': {}
 
   '@types/argparse@1.0.38': {}
 

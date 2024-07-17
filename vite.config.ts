@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import { node } from '@liuli-util/vite-plugin-node'
+import { node } from "@liuli-util/vite-plugin-node";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [node()],
-  appType: "custom"
-})
+    plugins: [node()],
+    appType: "custom",
+});
