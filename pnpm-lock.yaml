@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      create-kaplay:
-        specifier: 'link:'
-        version: 'link:'
     devDependencies:
       '@liuli-util/vite-plugin-node':
         specifier: ^0.9.0
