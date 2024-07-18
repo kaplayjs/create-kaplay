@@ -214,6 +214,14 @@ if (opts["example"]) {
     const example = await fetch(`${kaplayRepo}/examples/${opts["example"]}.js`);
     const exampleText = await example.text();
 
+    if (!example.ok) {
+        fail(
+            `Example "${
+                opts["example"]
+            }" not found. Check https://github.com/marklovers/kaplay/tree/master/examples for available examples`,
+        );
+    }
+
     startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n"
         + exampleText;
 }
