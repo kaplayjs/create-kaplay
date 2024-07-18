@@ -5,6 +5,7 @@ import {
     packageInstalls,
     packageRunScripts,
 } from "./packageManagers";
+import viteConfigContent from "./template/vite.config.js?raw";
 
 import cp from "child_process";
 import fs from "fs";
@@ -274,10 +275,12 @@ create(dir(dest, [
         "package.json",
         stringify({
             "name": dest,
+            "type": "module",
             "scripts": {
                 "build": `vite build`,
                 "dev": `vite`,
-                "bundle":
+                "preview": `vite preview`,
+                "zip":
                     `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"`,
                 ...(ts
                     ? {
@@ -292,6 +295,10 @@ create(dir(dest, [
                     : {}),
             },
         }),
+    ),
+    file(
+        `vite.config.${ext}`,
+        viteConfigContent,
     ),
     file(
         "index.html",
