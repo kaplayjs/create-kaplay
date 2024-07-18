@@ -7,14 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
-      create-kaplay:
-        specifier: 'link:'
-        version: 'link:'
     devDependencies:
       '@liuli-util/vite-plugin-node':
         specifier: ^0.9.0
-        version: 0.9.0(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.4.2)(vite@5.3.4(@types/node@20.14.11))
+        version: 0.9.0(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.11))
       '@types/node':
         specifier: ^20.14.11
         version: 20.14.11
@@ -24,6 +20,9 @@ importers:
       nodemon:
         specifier: ^3.1.4
         version: 3.1.4
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
       vite:
         specifier: ^5.3.4
         version: 5.3.4(@types/node@20.14.11)
@@ -774,6 +773,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@5.5.3:
+    resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   undefsafe@2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
 
@@ -962,14 +966,14 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
-  '@liuli-util/vite-plugin-node@0.9.0(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.4.2)(vite@5.3.4(@types/node@20.14.11))':
+  '@liuli-util/vite-plugin-node@0.9.0(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.11))':
     dependencies:
       '@microsoft/api-extractor': 7.47.2(@types/node@20.14.11)
       magic-string: 0.30.10
       pathe: 1.1.2
       rollup-plugin-node-externals: 7.1.2(rollup@4.18.1)
       vite: 5.3.4(@types/node@20.14.11)
-      vite-plugin-dts: 3.9.1(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.4.2)(vite@5.3.4(@types/node@20.14.11))
+      vite-plugin-dts: 3.9.1(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.11))
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -1197,7 +1201,7 @@ snapshots:
       '@vue/compiler-core': 3.4.32
       '@vue/shared': 3.4.32
 
-  '@vue/language-core@1.8.27(typescript@5.4.2)':
+  '@vue/language-core@1.8.27(typescript@5.5.3)':
     dependencies:
       '@volar/language-core': 1.11.1
       '@volar/source-map': 1.11.1
@@ -1209,7 +1213,7 @@ snapshots:
       path-browserify: 1.0.1
       vue-template-compiler: 2.7.16
     optionalDependencies:
-      typescript: 5.4.2
+      typescript: 5.5.3
 
   '@vue/shared@3.4.32': {}
 
@@ -1557,6 +1561,8 @@ snapshots:
 
   typescript@5.4.2: {}
 
+  typescript@5.5.3: {}
+
   undefsafe@2.0.5: {}
 
   undici-types@5.26.5: {}
@@ -1586,16 +1592,16 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@3.9.1(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.4.2)(vite@5.3.4(@types/node@20.14.11)):
+  vite-plugin-dts@3.9.1(@types/node@20.14.11)(rollup@4.18.1)(typescript@5.5.3)(vite@5.3.4(@types/node@20.14.11)):
     dependencies:
       '@microsoft/api-extractor': 7.43.0(@types/node@20.14.11)
       '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
-      '@vue/language-core': 1.8.27(typescript@5.4.2)
+      '@vue/language-core': 1.8.27(typescript@5.5.3)
       debug: 4.3.5(supports-color@5.5.0)
       kolorist: 1.8.0
       magic-string: 0.30.10
-      typescript: 5.4.2
-      vue-tsc: 1.8.27(typescript@5.4.2)
+      typescript: 5.5.3
+      vue-tsc: 1.8.27(typescript@5.5.3)
     optionalDependencies:
       vite: 5.3.4(@types/node@20.14.11)
     transitivePeerDependencies:
@@ -1617,12 +1623,12 @@ snapshots:
       de-indent: 1.0.2
       he: 1.2.0
 
-  vue-tsc@1.8.27(typescript@5.4.2):
+  vue-tsc@1.8.27(typescript@5.5.3):
     dependencies:
       '@volar/typescript': 1.11.1
-      '@vue/language-core': 1.8.27(typescript@5.4.2)
+      '@vue/language-core': 1.8.27(typescript@5.5.3)
       semver: 7.6.3
-      typescript: 5.4.2
+      typescript: 5.5.3
 
   yallist@4.0.0: {}
 

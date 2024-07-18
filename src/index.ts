@@ -4,7 +4,7 @@ import {
     packageExecutions,
     packageInstalls,
     packageRunScripts,
-} from "./packageManagers";
+} from "./packageManagers.ts";
 import viteConfigContent from "./template/vite.config.js?raw";
 
 import cp from "child_process";
