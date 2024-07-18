@@ -175,7 +175,7 @@ const request = async (opt) =>
 
 const exec = async (cmd, args, opts) =>
     new Promise((resolve) => {
-        const proc = cp.spawn(isWindows ? cmd + ".cmd" : cmd, args, {
+        const proc = cp.spawn(cmd, args, {
             ...opts,
             ...(isWindows ? { shell: true } : {}),
         });
