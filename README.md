@@ -1,22 +1,39 @@
-# create-kaplay
+# create-kaplay 🦖
 
-A script to help you start a KAPLAY project in no time
+A CLI tool to create a new [KAPLAY](https://kaplayjs.com) project in no time.
+
+It will create a project template using [Vite](https://vitejs.dev), this will
+give you:
+
+- A modern setup 🚀
+- A fast development server with hot module replacement ⚡
+- Build for production and generate static assets 🏗️
+- A simple and fast bundler 📦
+- TypeScript support out of the box 🦄
+
+If you want to package your game for desktop, you can use the `--desktop` option
+to enable [Tauri](https://tauri.app) support. Follow the
+[Tauri prerequisites guide](https://tauri.app/v1/guides/getting-started/prerequisites)
+to get started.
 
 ## EXAMPLE
+
 ```sh
 # quick start with default config
 create-kaplay mygame
 
 # calling with options
-create-kaplay -t -s 4 -d -e burp mygame
+create-kaplay --typescript --desktop mygame
 ```
 
 ## USAGE
+
 ```sh
 create-kaplay [OPTIONS] <dir>
 ```
 
 ## OPTIONS
+
 ```
 -h, --help             Print help message
 -t, --typescript       Use TypeScript

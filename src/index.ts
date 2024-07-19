@@ -1,25 +1,38 @@
 #!/usr/bin/env node
-
-const VERSION = "2.6.3";
+import {
+    detectPackageManager,
+    packageExecutions,
+    packageInstalls,
+    packageRunScripts,
+} from "./packageManagers.ts";
+import viteConfigContent from "./template/vite.config.js?raw";
 
 import cp from "child_process";
 import fs from "fs";
 import https from "https";
 import path from "path";
 
-const kaplayRepo = `https://raw.githubusercontent.com/marklovers/kaplay/master`
+const VERSION = "3.0.0";
 
+const packageManager = detectPackageManager() ?? "npm";
+const packageExec = packageExecutions[packageManager];
+const installCmd = packageInstalls[packageManager];
+const devCmd = packageRunScripts("dev")[packageManager];
+
+const kaplayRepo = `https://raw.githubusercontent.com/marklovers/kaplay/master`;
 const cwd = process.cwd();
-const c = (n, msg) => `\x1b[${n}m${msg}\x1b[0m`;
+
+const c = (n: number, msg: string) => `\x1b[${n}m${msg}\x1b[0m`;
+
 const isWindows = /^win/.test(process.platform);
 
-const fail = (msg, ifHelp) => {
+const fail = (msg: string, ifHelp?: boolean) => {
     console.error(c(31, msg));
     if (ifHelp) console.error("\n" + help);
     process.exit(1);
 };
 
-const info = (msg) => console.log(c(33, msg));
+const info = (msg: string) => console.log(c(33, msg));
 
 const optMap = [
     { long: "help", short: "h", desc: "Print this message" },
@@ -61,13 +74,13 @@ const usageLen = optDisplay
     .reduce((len, dis) => dis.usage.length > len ? dis.usage.length : len, 0);
 
 const help = `
-create-kaplay v${VERSION}
+create-kaplay v${VERSION} ${packageManager}
 
-${c(33, "USAGE")}
+${c(32, "USAGE 🦖")}
 
   $ create-kaplay [OPTIONS] <dir>
 
-${c(33, "OPTIONS")}
+${c(32, "OPTIONS")}
 
   ${
     optDisplay.map((opt) =>
@@ -77,10 +90,9 @@ ${c(33, "OPTIONS")}
     ).join("\n  ")
 }
 
-${c(33, "EXAMPLE")}
-
+${c(32, "EXAMPLE")}
   ${c(90, "# quick start with default config")}
-  $ create-kaplay mygame
+  $ create-kaplay my-game
 
   ${
     c(
@@ -88,11 +100,11 @@ ${c(33, "EXAMPLE")}
         "# calling with options",
     )
 }
-  $ create-kaplay -t -s 4 -d -e burp mygame
+  $ create-kaplay --typescript --spaces 4 --desktop --example burp my-game
 `.trim();
 
 const opts = {};
-const args = [];
+const args: string[] = [];
 
 // process opts and args
 iterargs: for (let i = 2; i < process.argv.length; i++) {
@@ -140,8 +152,8 @@ const ts = opts["typescript"];
 const desktop = opts["desktop"];
 const ext = ts ? "ts" : "js";
 
-const download = async (url, to) =>
-    new Promise((resolve) => {
+const download = async (url: string, to: string) =>
+    new Promise<void>((resolve) => {
         const file = fs.createWriteStream(to);
         https.get(url, (res) => {
             res.pipe(file);
@@ -163,7 +175,7 @@ const request = async (opt) =>
 
 const exec = async (cmd, args, opts) =>
     new Promise((resolve) => {
-        const proc = cp.spawn(isWindows ? cmd + ".cmd" : cmd, args, {
+        const proc = cp.spawn(cmd, args, {
             ...opts,
             ...(isWindows ? { shell: true } : {}),
         });
@@ -193,8 +205,8 @@ k.add([
 k.onClick(() => k.addKaboom(k.mousePos()))
 `.trim();
 
-
-const assetsRegex = /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
+const assetsRegex =
+    /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
 
 if (opts["example"]) {
     info(`- fetching example "${opts["example"]}"`);
@@ -202,21 +214,29 @@ if (opts["example"]) {
     const example = await fetch(`${kaplayRepo}/examples/${opts["example"]}.js`);
     const exampleText = await example.text();
 
-    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n" + exampleText;
+    if (!example.ok) {
+        fail(
+            `Example "${
+                opts["example"]
+            }" not found. Check https://github.com/marklovers/kaplay/tree/master/examples for available examples`,
+        );
+    }
+
+    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n"
+        + exampleText;
 }
 
 // get assets
-const folders = [];
+const folders: string[] = [];
 
 for (const match of startCode.matchAll(assetsRegex)) {
     const [_idk, _type, _name, url] = match;
 
-    if(url.startsWith("/sprites")) continue;
+    if (url.startsWith("/sprites")) continue;
 
-    if(!folders.includes(url.split("/")[2])) {
+    if (!folders.includes(url.split("/")[2])) {
         folders.push(url.split("/")[2]);
     }
-    
 }
 
 const pkgs = [
@@ -224,7 +244,7 @@ const pkgs = [
 ];
 
 const devPkgs = [
-    "esbuild@latest",
+    "vite@latest",
     ...(ts ? ["typescript@latest"] : []),
     ...(desktop ? ["@tauri-apps/cli@latest"] : []),
 ];
@@ -263,13 +283,13 @@ create(dir(dest, [
         "package.json",
         stringify({
             "name": dest,
+            "type": "module",
             "scripts": {
-                "build":
-                    `esbuild --bundle src/main.${ext} --outfile=www/main.js --minify`,
-                "dev":
-                    `esbuild --bundle --sourcemap --keep-names src/main.${ext} --outfile=www/main.js --servedir=www`,
-                "bundle":
-                    "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"",
+                "build": `vite build`,
+                "dev": `vite`,
+                "preview": `vite preview`,
+                "zip":
+                    `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"`,
                 ...(ts
                     ? {
                         "check": "tsc",
@@ -284,28 +304,32 @@ create(dir(dest, [
             },
         }),
     ),
-    dir("www", [
-        file(
-            "index.html",
-            `
+    file(
+        `vite.config.${ext}`,
+        viteConfigContent,
+    ),
+    file(
+        "index.html",
+        `
 <!DOCTYPE html>
 <html>
 <head>
-	<title>${dest}</title>
+<title>${dest}</title>
 </head>
 <body style="overflow:hidden">
-	<script src="main.js"></script>
+<script src="src/main.${ext}" type="module"></script>
 </body>
 </html>
-		`,
-        ),
+    `,
+    ),
+    dir("public", [
         dir("sprites", []),
         // TODO: Create this folders if only needed
         dir("examples", [
             dir("sprites", []),
             dir("sounds", []),
             dir("fonts", []),
-            dir("shaders", [])
+            dir("shaders", []),
         ]),
     ]),
     dir("src", [
@@ -354,7 +378,7 @@ ${
 ## Development
 
 \`\`\`sh
-$ npm run dev
+$ ${packageManager} run dev
 \`\`\`
 
 will start a dev server at http://localhost:8000
@@ -362,13 +386,13 @@ will start a dev server at http://localhost:8000
 ## Distribution
 
 \`\`\`sh
-$ npm run build
+$ ${packageManager} run build
 \`\`\`
 
 will build your js files into \`www/main.js\`
 
 \`\`\`sh
-$ npm run bundle
+$ ${packageManager} run bundle
 \`\`\`
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
@@ -383,13 +407,13 @@ This project uses tauri for desktop builds, you have to have \`rust\` installed 
 For tauri native APIs look [here](https://tauri.app/v1/api/js/)
 
 \`\`\`sh
-$ npm run dev:desktop
+$ ${packageManager} run dev:desktop
 \`\`\`
 
 will start the dev server and a native window that servers content from that dev server
 
 \`\`\`sh
-$ npm run build:desktop
+$ ${packageManager} run build:desktop
 \`\`\`
 
 will create distributable native app package
@@ -407,37 +431,41 @@ info("- downloading example sprites");
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
-    if(url.startsWith("/sprites")) {
+    if (
+        url.startsWith("sprites") || url.startsWith("/sprites")
+        || url.startsWith("./sprites")
+    ) {
         info(`- downloading sprite "${name}"`);
+
         await download(
-            `${kaplayRepo}/${url}`,
-            path.join("www", url),
+            `${kaplayRepo}/assets/${url}`,
+            path.join("public", url),
         );
-    }
-    else {
+    } else {
         info(`- downloading ${type.toLowerCase()} "${name}"`);
+
         await download(
-            `${kaplayRepo}/${url}`,
-            path.join("www", url),
-        )
+            `${kaplayRepo}/examples/${url}`,
+            path.join("public", url),
+        );
     }
 }
 
 info(`- installing packages ${pkgs.map((pkg) => `"${pkg}"`).join(", ")}`);
-await exec("npm", ["install", ...pkgs], {
+await exec(packageManager, [installCmd, ...pkgs], {
     stdio: ["inherit", "ignore", "inherit"],
 });
 info(
     `- installing dev packages ${devPkgs.map((pkg) => `"${pkg}"`).join(", ")}`,
 );
-await exec("npm", ["install", "-D", ...devPkgs], {
+await exec(packageManager, [installCmd, "-D", ...devPkgs], {
     stdio: ["inherit", "ignore", "inherit"],
 });
 
 if (desktop) {
     info("- starting tauri project for desktop build");
 
-    await exec("npx", [
+    await exec(packageExec, [
         "tauri",
         "init",
         "--app-name",
@@ -445,22 +473,24 @@ if (desktop) {
         "--window-title",
         dest,
         "--dist-dir",
-        "../www",
+        "../dist",
         "--dev-path",
         "http://localhost:8000",
         "--before-dev-command",
-        "npm run dev",
+        `${packageManager} run dev`,
         "--before-build-command",
-        "npm run build",
+        `${packageManager} run build`,
         "--ci",
     ], { stdio: "inherit" });
 
     await download(
         "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
-        "www/icon.png",
+        "public/icon.png",
     );
 
-    await exec("npx", ["tauri", "icon", "www/icon.png"], { stdio: "inherit" });
+    await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
+        stdio: "inherit",
+    });
 
     updateJSONFile("src-tauri/tauri.conf.json", (cfg) => {
         cfg.tauri.bundle.identifier = "com.kaplay.dev";
@@ -473,7 +503,7 @@ console.log(`
 Success! Now
 
   $ cd ${dest}
-  $ npm run dev
+  $ ${packageManager} ${devCmd}
 
-and start editing src/main.${ext}!
+and start editing src/main.${ext}! 🦖💥
 `.trim());
