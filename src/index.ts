@@ -68,7 +68,7 @@ const optMap = [
     {
         long: "verbose",
         short: "verb",
-        desc: "Print more info",
+        desc: "Print additional information",
     }
 ];
 
