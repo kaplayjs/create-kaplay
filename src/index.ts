@@ -33,6 +33,11 @@ const fail = (msg: string, ifHelp?: boolean) => {
 };
 
 const info = (msg: string) => console.log(c(33, msg));
+const debug = (msg: string) => {
+    if (opts["verbose"]) {
+        console.log(c(90, msg));
+    }
+};
 
 const optMap = [
     { long: "help", short: "h", desc: "Print this message" },
@@ -60,6 +65,11 @@ const optMap = [
         value: "label",
         desc: "Use a specific kaplay version (default latest)",
     },
+    {
+        long: "verbose",
+        short: "verb",
+        desc: "Print more info",
+    }
 ];
 
 // constructing help msg
@@ -173,16 +183,21 @@ const request = async (opt) =>
         req.end();
     });
 
-const exec = async (cmd, args, opts) =>
-    new Promise((resolve) => {
+const exec = async (cmd, args, opts) =>{
+    debug(`- running ${cmd} ${args.join(" ")}`);
+
+    return new Promise((resolve) => {
         const proc = cp.spawn(cmd, args, {
             ...opts,
             ...(isWindows ? { shell: true } : {}),
         });
 
+        debug(`- spawned process ${proc.pid} ${cmd} ${args.join(" ")}`);
+
         proc.on("exit", resolve);
         proc.on("error", fail);
     });
+}
 
 const updateJSONFile = (path, action) => {
     const json = JSON.parse(fs.readFileSync(path, "utf8"));
@@ -464,6 +479,8 @@ await exec(packageManager, [installCmd, "-D", ...devPkgs], {
 
 if (desktop) {
     info("- starting tauri project for desktop build");
+
+    debug(`- running ${packageManager} tauri init`);
 
     await exec(packageExec, [
         "tauri",

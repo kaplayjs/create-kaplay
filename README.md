@@ -41,4 +41,5 @@ create-kaplay [OPTIONS] <dir>
 -e, --example <name>   Start from an example listed on play.kaplayjs.com
 -s  --spaces <level>   Use spaces instead of tabs for generated files
 -v, --version <label>  Use a specific kaplay version (default latest)
+-verb, --verbose       Print additional information
 ```
