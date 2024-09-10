@@ -39,6 +39,14 @@ const debug = (msg: string) => {
     }
 };
 
+const wrapArg = (arg: string) => {
+    if (isWindows) {
+        return `"${arg}"`;
+    }
+
+    return arg;
+}
+
 const optMap = [
     { long: "help", short: "h", desc: "Print this message" },
     { long: "typescript", short: "t", desc: "Use TypeScript" },
@@ -494,9 +502,9 @@ if (desktop) {
         "--dev-path",
         "http://localhost:8000",
         "--before-dev-command",
-        `${packageManager} run dev`,
+        wrapArg(`${packageManager} run dev`),
         "--before-build-command",
-        `${packageManager} run build`,
+        wrapArg(`${packageManager} run build`),
         "--ci",
     ], { stdio: "inherit" });
 
@@ -504,7 +512,7 @@ if (desktop) {
         "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
         "public/icon.png",
     );
-
+``
     await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
         stdio: "inherit",
     });
