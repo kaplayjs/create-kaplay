@@ -380,7 +380,7 @@ create(dir(dest, [
         ".gitignore",
         `
 node_modules/
-www/main.js
+www/
 dist/
 ${desktop ? "src-tauri/target/" : ""}
 	`,
@@ -412,10 +412,10 @@ will start a dev server at http://localhost:8000
 $ ${packageManager} run build
 \`\`\`
 
-will build your js files into \`www/main.js\`
+will build your js files into \`www/\`
 
 \`\`\`sh
-$ ${packageManager} run bundle
+$ ${packageManager} run zip
 \`\`\`
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
