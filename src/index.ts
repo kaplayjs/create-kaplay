@@ -312,7 +312,7 @@ create(dir(dest, [
                 "dev": `vite`,
                 "preview": `vite preview`,
                 "zip":
-                    `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\"`,
+                    `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip dist -x \"**/.DS_Store\"`,
                 ...(ts
                     ? {
                         "check": "tsc",
@@ -380,7 +380,6 @@ create(dir(dest, [
         ".gitignore",
         `
 node_modules/
-www/main.js
 dist/
 ${desktop ? "src-tauri/target/" : ""}
 	`,
@@ -391,7 +390,7 @@ ${desktop ? "src-tauri/target/" : ""}
 # Folder structure
 
 - \`src\` - source code for your kaplay project
-- \`www\` - distribution folder, contains your index.html, built js bundle and static assets
+- \`dist\` - distribution folder, contains your index.html, built js bundle and static assets
 ${
             desktop
                 ? "- `src-tauri` - tauri project folder, contains tauri config file, icons, rust source if you need native code"
@@ -412,10 +411,10 @@ will start a dev server at http://localhost:8000
 $ ${packageManager} run build
 \`\`\`
 
-will build your js files into \`www/main.js\`
+will build your js files into \`dist/\`
 
 \`\`\`sh
-$ ${packageManager} run bundle
+$ ${packageManager} run zip
 \`\`\`
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
