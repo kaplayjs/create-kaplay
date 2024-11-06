@@ -43,3 +43,10 @@ create-kaplay [OPTIONS] <dir>
 -v, --version <label>  Use a specific kaplay version (default latest)
 -verb, --verbose       Print additional information
 ```
+
+## FAQ
+
+**Q: Why not HMR with Vite?**
+
+A: KAPLAY Games are stateful and live-reloading can break the game state. You
+can enable HMR by removing `hmr` key inside `vite.config.js`.

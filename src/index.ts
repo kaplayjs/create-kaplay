@@ -12,7 +12,7 @@ import fs from "fs";
 import https from "https";
 import path from "path";
 
-const VERSION = "3.0.0";
+const VERSION = "3.0.1s";
 
 const packageManager = detectPackageManager() ?? "npm";
 const packageExec = packageExecutions[packageManager];
@@ -45,7 +45,7 @@ const wrapArg = (arg: string) => {
     }
 
     return arg;
-}
+};
 
 const optMap = [
     { long: "help", short: "h", desc: "Print this message" },
@@ -77,7 +77,7 @@ const optMap = [
         long: "verbose",
         short: "verb",
         desc: "Print additional information",
-    }
+    },
 ];
 
 // constructing help msg
@@ -191,7 +191,7 @@ const request = async (opt) =>
         req.end();
     });
 
-const exec = async (cmd, args, opts) =>{
+const exec = async (cmd, args, opts) => {
     debug(`- running ${cmd} ${args.join(" ")}`);
 
     return new Promise((resolve) => {
@@ -205,7 +205,7 @@ const exec = async (cmd, args, opts) =>{
         proc.on("exit", resolve);
         proc.on("error", fail);
     });
-}
+};
 
 const updateJSONFile = (path, action) => {
     const json = JSON.parse(fs.readFileSync(path, "utf8"));
@@ -511,7 +511,7 @@ if (desktop) {
         "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
         "public/icon.png",
     );
-``
+    ``;
     await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
         stdio: "inherit",
     });
