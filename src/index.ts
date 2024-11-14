@@ -381,6 +381,7 @@ create(dir(dest, [
         `
 node_modules/
 dist/
+.DS_Store
 ${desktop ? "src-tauri/target/" : ""}
 	`,
     ),
