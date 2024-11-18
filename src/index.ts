@@ -6,13 +6,14 @@ import {
     packageRunScripts,
 } from "./packageManagers.ts";
 import viteConfigContent from "./template/vite.config.js?raw";
+import mainJsContent from "./template/src/main.js?raw";
 
 import cp from "child_process";
 import fs from "fs";
 import https from "https";
 import path from "path";
 
-const VERSION = "3.0.1s";
+const VERSION = "3.0.2";
 
 const packageManager = detectPackageManager() ?? "npm";
 const packageExec = packageExecutions[packageManager];
@@ -212,21 +213,7 @@ const updateJSONFile = (path, action) => {
     fs.writeFileSync(path, stringify(action(json)));
 };
 
-let startCode = `
-import kaplay from "kaplay";
-import "kaplay/global";
-
-const k = kaplay()
-
-k.loadSprite("bean", "sprites/bean.png")
-
-k.add([
-	k.pos(120, 80),
-	k.sprite("bean"),
-])
-
-k.onClick(() => k.addKaboom(k.mousePos()))
-`.trim();
+let startCode = mainJsContent;
 
 const assetsRegex =
     /load(Sprite|Sound|Shader|Aseprite|Font|BitmapFont)\("([^"]+)",\s*"([^"]+)"\)/gm;
