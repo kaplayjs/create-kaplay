@@ -13,7 +13,7 @@ import fs from "fs";
 import https from "https";
 import path from "path";
 
-const VERSION = "3.0.2";
+const VERSION = "3.0.3";
 
 const packageManager = detectPackageManager() ?? "npm";
 const packageExec = packageExecutions[packageManager];
@@ -512,10 +512,13 @@ if (desktop) {
 
 console.log("");
 console.log(`
-Success! Now
+Success! Now run:
 
-  $ cd ${dest}
-  $ ${packageManager} ${devCmd}
+$ cd ${dest}
+$ ${packageManager} ${devCmd}
 
-and start editing src/main.${ext}! 🦖💥
+and start editing src/main.${ext}! 🦖
+--------------------------------------------
+Consider donating to KAPLAY:
+💖 https://opencollective.com/kaplay
 `.trim());
