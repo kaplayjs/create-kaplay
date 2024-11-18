@@ -6,7 +6,7 @@ It will create a project template using [Vite](https://vitejs.dev), this will
 give you:
 
 - A modern setup 🚀
-- A fast development server with hot module replacement ⚡
+- A fast development server ⚡
 - Build for production and generate static assets 🏗️
 - A simple and fast bundler 📦
 - TypeScript support out of the box 🦄
