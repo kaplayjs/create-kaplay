@@ -13,7 +13,7 @@ import fs from "fs";
 import https from "https";
 import path from "path";
 
-const VERSION = "3.0.3";
+const VERSION = "3.1.0";
 
 const packageManager = detectPackageManager() ?? "npm";
 const packageExec = packageExecutions[packageManager];
@@ -89,8 +89,10 @@ const optDisplay = optMap.map((opt) => ({
     desc: opt.desc,
 }));
 
-const usageLen = optDisplay
-    .reduce((len, dis) => dis.usage.length > len ? dis.usage.length : len, 0);
+const usageLen = optDisplay.reduce(
+    (len, dis) => (dis.usage.length > len ? dis.usage.length : len),
+    0
+);
 
 const help = `
 create-kaplay v${VERSION} ${packageManager}
@@ -101,24 +103,20 @@ ${c(32, "USAGE 🦖")}
 
 ${c(32, "OPTIONS")}
 
-  ${
-    optDisplay.map((opt) =>
-        `${c(32, opt.usage)} ${
-            " ".repeat(usageLen - opt.usage.length)
-        } ${opt.desc}`
-    ).join("\n  ")
-}
+  ${optDisplay
+      .map(
+          (opt) =>
+              `${c(32, opt.usage)} ${" ".repeat(usageLen - opt.usage.length)} ${
+                  opt.desc
+              }`
+      )
+      .join("\n  ")}
 
 ${c(32, "EXAMPLE")}
   ${c(90, "# quick start with default config")}
   $ create-kaplay my-game
 
-  ${
-    c(
-        90,
-        "# calling with options",
-    )
-}
+  ${c(90, "# calling with options")}
   $ create-kaplay --typescript --spaces 4 --desktop --example burp my-game
 `.trim();
 
@@ -226,14 +224,13 @@ if (opts["example"]) {
 
     if (!example.ok) {
         fail(
-            `Example "${
-                opts["example"]
-            }" not found. Check https://github.com/marklovers/kaplay/tree/master/examples for available examples`,
+            `Example "${opts["example"]}" not found. Check https://github.com/marklovers/kaplay/tree/master/examples for available examples`
         );
     }
 
-    startCode = "import kaplay from \"kaplay\"\nimport \"kaplay/global\";\n\n"
-        + exampleText;
+    startCode =
+        'import kaplay from "kaplay"\nimport "kaplay/global";\n\n' +
+        exampleText;
 }
 
 // get assets
@@ -249,12 +246,11 @@ for (const match of startCode.matchAll(assetsRegex)) {
     }
 }
 
-const pkgs = [
-    `kaplay@${opts["version"] ?? "latest"}`,
-];
+const pkgs = [`kaplay@${opts["version"] ?? "latest"}`];
 
 const devPkgs = [
     "vite@latest",
+    "@types/node@latest",
     ...(ts ? ["typescript@latest"] : []),
     ...(desktop ? ["@tauri-apps/cli@latest"] : []),
 ];
@@ -288,39 +284,36 @@ const create = (item) => {
 };
 
 // generate core files
-create(dir(dest, [
-    file(
-        "package.json",
-        stringify({
-            "name": dest,
-            "type": "module",
-            "scripts": {
-                "build": `vite build`,
-                "dev": `vite`,
-                "preview": `vite preview`,
-                "zip":
-                    `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip dist -x \"**/.DS_Store\"`,
-                ...(ts
-                    ? {
-                        "check": "tsc",
-                    }
-                    : {}),
-                ...(desktop
-                    ? {
-                        "dev:desktop": "tauri dev",
-                        "build:desktop": "tauri build",
-                    }
-                    : {}),
-            },
-        }),
-    ),
-    file(
-        `vite.config.${ext}`,
-        viteConfigContent,
-    ),
-    file(
-        "index.html",
-        `
+create(
+    dir(dest, [
+        file(
+            "package.json",
+            stringify({
+                name: dest,
+                type: "module",
+                scripts: {
+                    build: `vite build`,
+                    dev: `vite`,
+                    preview: `vite preview`,
+                    zip: `${packageManager} run build && mkdir -p dist && zip -r dist/game.zip dist -x \"**/.DS_Store\"`,
+                    ...(ts
+                        ? {
+                              check: "tsc",
+                          }
+                        : {}),
+                    ...(desktop
+                        ? {
+                              "dev:desktop": "tauri dev",
+                              "build:desktop": "tauri build",
+                          }
+                        : {}),
+                },
+            })
+        ),
+        file(`vite.config.${ext}`, viteConfigContent),
+        file(
+            "index.html",
+            `
 <!DOCTYPE html>
 <html>
 <head>
@@ -330,60 +323,56 @@ create(dir(dest, [
 <script src="src/main.${ext}" type="module"></script>
 </body>
 </html>
-    `,
-    ),
-    dir("public", [
-        dir("sprites", []),
-        // TODO: Create this folders if only needed
-        dir("examples", [
+    `
+        ),
+        dir("public", [
             dir("sprites", []),
-            dir("sounds", []),
-            dir("fonts", []),
-            dir("shaders", []),
+            // TODO: Create this folders if only needed
+            dir("examples", [
+                dir("sprites", []),
+                dir("sounds", []),
+                dir("fonts", []),
+                dir("shaders", []),
+            ]),
         ]),
-    ]),
-    dir("src", [
-        file(`main.${ext}`, startCode),
-    ]),
-    file("README.md", ""),
-    ...(ts
-        ? [
-            file(
-                "tsconfig.json",
-                stringify({
-                    compilerOptions: {
-                        noEmit: true,
-                        target: "esnext",
-                        moduleResolution: "node",
-                    },
-                    include: [
-                        "src/**/*.ts",
-                    ],
-                }),
-            ),
-        ]
-        : []),
-    file(
-        ".gitignore",
-        `
+        dir("src", [file(`main.${ext}`, startCode)]),
+        file("README.md", ""),
+        ...(ts
+            ? [
+                  file(
+                      "tsconfig.json",
+                      stringify({
+                          compilerOptions: {
+                              noEmit: true,
+                              target: "esnext",
+                              moduleResolution: "node",
+                          },
+                          include: ["src/**/*.ts"],
+                      })
+                  ),
+              ]
+            : []),
+        file(
+            ".gitignore",
+            `
 node_modules/
 dist/
 .DS_Store
 ${desktop ? "src-tauri/target/" : ""}
-	`,
-    ),
-    file(
-        "README.md",
-        `
+	`
+        ),
+        file(
+            "README.md",
+            `
 # Folder structure
 
 - \`src\` - source code for your kaplay project
 - \`dist\` - distribution folder, contains your index.html, built js bundle and static assets
 ${
-            desktop
-                ? "- `src-tauri` - tauri project folder, contains tauri config file, icons, rust source if you need native code"
-                : ""
-        }
+    desktop
+        ? "- `src-tauri` - tauri project folder, contains tauri config file, icons, rust source if you need native code"
+        : ""
+}
 
 ## Development
 
@@ -408,8 +397,8 @@ $ ${packageManager} run zip
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
 
 ${
-            desktop
-                ? `
+    desktop
+        ? `
 ## Desktop
 
 This project uses tauri for desktop builds, you have to have \`rust\` installed on your system for desktop to work, check out [tauri setup guide](https://tauri.app/v1/guides/getting-started/prerequisites/)
@@ -428,11 +417,12 @@ $ ${packageManager} run build:desktop
 
 will create distributable native app package
 `
-                : ""
-        }
-	`,
-    ),
-]));
+        : ""
+}
+	`
+        ),
+    ])
+);
 
 process.chdir(dest);
 
@@ -442,21 +432,19 @@ for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
     if (
-        url.startsWith("sprites") || url.startsWith("/sprites")
-        || url.startsWith("./sprites")
+        url.startsWith("sprites") ||
+        url.startsWith("/sprites") ||
+        url.startsWith("./sprites")
     ) {
         info(`- downloading sprite "${name}"`);
 
-        await download(
-            `${kaplayRepo}/assets/${url}`,
-            path.join("public", url),
-        );
+        await download(`${kaplayRepo}/assets/${url}`, path.join("public", url));
     } else {
         info(`- downloading ${type.toLowerCase()} "${name}"`);
 
         await download(
             `${kaplayRepo}/examples/${url}`,
-            path.join("public", url),
+            path.join("public", url)
         );
     }
 }
@@ -466,7 +454,7 @@ await exec(packageManager, [installCmd, ...pkgs], {
     stdio: ["inherit", "ignore", "inherit"],
 });
 info(
-    `- installing dev packages ${devPkgs.map((pkg) => `"${pkg}"`).join(", ")}`,
+    `- installing dev packages ${devPkgs.map((pkg) => `"${pkg}"`).join(", ")}`
 );
 await exec(packageManager, [installCmd, "-D", ...devPkgs], {
     stdio: ["inherit", "ignore", "inherit"],
@@ -477,27 +465,31 @@ if (desktop) {
 
     debug(`- running ${packageManager} tauri init`);
 
-    await exec(packageExec, [
-        "tauri",
-        "init",
-        "--app-name",
-        dest,
-        "--window-title",
-        dest,
-        "--dist-dir",
-        "../dist",
-        "--dev-path",
-        "http://localhost:8000",
-        "--before-dev-command",
-        wrapArg(`${packageManager} run dev`),
-        "--before-build-command",
-        wrapArg(`${packageManager} run build`),
-        "--ci",
-    ], { stdio: "inherit" });
+    await exec(
+        packageExec,
+        [
+            "tauri",
+            "init",
+            "--app-name",
+            dest,
+            "--window-title",
+            dest,
+            "--dist-dir",
+            "../dist",
+            "--dev-path",
+            "http://localhost:8000",
+            "--before-dev-command",
+            wrapArg(`${packageManager} run dev`),
+            "--before-build-command",
+            wrapArg(`${packageManager} run build`),
+            "--ci",
+        ],
+        { stdio: "inherit" }
+    );
 
     await download(
         "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
-        "public/icon.png",
+        "public/icon.png"
     );
     ``;
     await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
@@ -511,7 +503,8 @@ if (desktop) {
 }
 
 console.log("");
-console.log(`
+console.log(
+    `
 Success! Now run:
 
 $ cd ${dest}
@@ -521,4 +514,5 @@ and start editing src/main.${ext}! 🦖
 --------------------------------------------
 Consider donating to KAPLAY:
 💖 https://opencollective.com/kaplay
-`.trim());
+`.trim()
+);
