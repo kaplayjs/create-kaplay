@@ -252,7 +252,7 @@ const devPkgs = [
     "vite@latest",
     "@types/node@latest",
     ...(ts ? ["typescript@latest"] : []),
-    ...(desktop ? ["@tauri-apps/cli@latest"] : []),
+    ...(desktop ? ["@tauri-apps/cli@1"] : []),
 ];
 
 const file = (name, content) => ({
