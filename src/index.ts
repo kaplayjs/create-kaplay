@@ -5,8 +5,8 @@ import {
     packageInstalls,
     packageRunScripts,
 } from "./packageManagers.ts";
-import viteConfigContent from "./template/vite.config.js?raw";
 import mainJsContent from "./template/src/main.js?raw";
+import viteConfigContent from "./template/vite.config.js?raw";
 
 import cp from "child_process";
 import fs from "fs";
@@ -20,7 +20,7 @@ const packageExec = packageExecutions[packageManager];
 const installCmd = packageInstalls[packageManager];
 const devCmd = packageRunScripts("dev")[packageManager];
 
-const kaplayRepo = `https://raw.githubusercontent.com/marklovers/kaplay/master`;
+const kaplayRepo = `https://raw.githubusercontent.com/kaplayjs/kaplay/master/examples`;
 const cwd = process.cwd();
 
 const c = (n: number, msg: string) => `\x1b[${n}m${msg}\x1b[0m`;
@@ -170,9 +170,12 @@ const desktop = opts["desktop"];
 const ext = ts ? "ts" : "js";
 
 const download = async (url: string, to: string) =>
-    new Promise<void>((resolve) => {
+    new Promise<void>((resolve, reject) => {
         const file = fs.createWriteStream(to);
         https.get(url, (res) => {
+            if (res.statusCode !== 200) {
+                reject(res.statusMessage);
+            }
             res.pipe(file);
             file.on("finish", () => {
                 file.close();
@@ -219,12 +222,12 @@ const assetsRegex =
 if (opts["example"]) {
     info(`- fetching example "${opts["example"]}"`);
 
-    const example = await fetch(`${kaplayRepo}/examples/${opts["example"]}.js`);
+    const example = await fetch(`${kaplayRepo}/${opts["example"]}.js`);
     const exampleText = await example.text();
 
     if (!example.ok) {
         fail(
-            `Example "${opts["example"]}" not found. Check https://github.com/marklovers/kaplay/tree/master/examples for available examples`
+            `Example "${opts["example"]}" not found. Check https://github.com/kaplayjs/kaplay/tree/master/examples for available examples`
         );
     }
 
@@ -431,21 +434,32 @@ info("- downloading example sprites");
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
+    const fullUrl = path.join(kaplayRepo, url);
+
     if (
         url.startsWith("sprites") ||
         url.startsWith("/sprites") ||
         url.startsWith("./sprites")
     ) {
         info(`- downloading sprite "${name}"`);
+        debug(`- sprite full url: ${fullUrl}`);
 
-        await download(`${kaplayRepo}/assets/${url}`, path.join("public", url));
+        try {
+            await download(fullUrl, path.join("public", url));
+        } catch (error) {
+            info(`- error while downloading sprite "${name}"`);
+            debug(`- error: ${error}`);
+        }
     } else {
         info(`- downloading ${type.toLowerCase()} "${name}"`);
+        debug(`- ${type.toLowerCase()} full url: ${fullUrl}`);
 
-        await download(
-            `${kaplayRepo}/examples/${url}`,
-            path.join("public", url)
-        );
+        try {
+            await download(fullUrl, path.join("public", "examples", url));
+        } catch (error) {
+            info(`- error while downloading ${type.toLowerCase()} "${name}"`);
+            debug(`- error: ${error}`);
+        }
     }
 }
 
@@ -487,11 +501,16 @@ if (desktop) {
         { stdio: "inherit" }
     );
 
-    await download(
-        "https://raw.githubusercontent.com/marklovers/kaplay/master/assets/sprites/k.png",
-        "public/icon.png"
-    );
-    ``;
+    try {
+        await download(
+            "https://raw.githubusercontent.com/kaplayjs/kaplay/master/examples/sprites/k.png",
+            "public/icon.png"
+        );
+    } catch (error) {
+        info(`- error while downloading icon`);
+        debug(`- error: ${error}`);
+    }
+
     await exec(packageExec, ["tauri", "icon", "public/icon.png"], {
         stdio: "inherit",
     });
