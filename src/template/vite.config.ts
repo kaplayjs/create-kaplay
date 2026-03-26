@@ -22,10 +22,15 @@ export default defineConfig({
     build: {
         // disable this for low bundle sizes
         sourcemap: true,
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: {
-                    kaplay: ["kaplay"],
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: "kaplay",
+                            test: /node_modules[\\/]kaplay/,
+                        },
+                    ],
                 },
             },
         },
