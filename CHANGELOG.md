@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed a bug in Windows where asset downloads were broken
-- Fixed a bug that made example assets not being stored correctly
+- Fixed a bug in Windows where asset downloads were broken - @lajbel
+- Fixed a bug that made example assets not being stored correctly - @lajbel
 
 ## [3.1.5] - 2026-04-23
 
