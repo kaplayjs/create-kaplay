@@ -438,7 +438,7 @@ info("- downloading example sprites");
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
 
-    const fullUrl = path.join(kaplayRepo, url);
+    const fullUrl = path.posix.join(kaplayRepo, url);
 
     if (
         url.startsWith("sprites") ||

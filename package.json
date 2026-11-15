@@ -1,28 +1,26 @@
 {
   "name": "create-kaplay",
   "description": "Start a KAPLAY project in no time",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "license": "MIT",
   "homepage": "https://kaplayjs.com/",
   "repository": "github:marklovers/create-kaplay",
   "type": "module",
-  "bin": "dist/index.js",
+  "bin": "dist/index.mjs",
   "files": [
     "dist/index.js",
     "README.md"
   ],
   "scripts": {
-    "build": "vite build",
-    "dev": "nodemon --watch ./src --ext \"ts,json\" --exec pnpm run build"
+    "build": "tsdown"
   },
   "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
   "devDependencies": {
-    "@liuli-util/vite-plugin-node": "^0.9.0",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.9.9",
     "kaplay": "^3001.0.2",
     "nodemon": "^3.1.4",
+    "tsdown": "^0.23.7",
     "typescript": "^5.5.3",
-    "vite": "^8.0.3",
-    "vite-node": "^6.0.0"
+    "unplugin-raw": "^0.8.0"
   }
 }
