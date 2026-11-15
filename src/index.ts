@@ -8,10 +8,12 @@ import {
 import mainJsContent from "./template/src/main.js?raw";
 import viteConfigContent from "./template/vite.config.js?raw";
 
-import cp from "child_process";
-import fs from "fs";
-import https from "https";
-import path from "path";
+import cp from "node:child_process";
+import fs from "node:fs";
+import https from "node:https";
+import path from "node:path";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
 
 const VERSION = "3.1.0";
 
@@ -169,20 +171,22 @@ const ts = opts["typescript"];
 const desktop = opts["desktop"];
 const ext = ts ? "ts" : "js";
 
-const download = async (url: string, to: string) =>
-    new Promise<void>((resolve, reject) => {
-        const file = fs.createWriteStream(to);
-        https.get(url, (res) => {
-            if (res.statusCode !== 200) {
-                reject(res.statusMessage);
-            }
-            res.pipe(file);
-            file.on("finish", () => {
-                file.close();
-                resolve();
-            });
-        });
-    });
+const download = async (url: string, to: string) => {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      throw new Error(`Download failed: ${res.status} ${res.statusText}`);
+    }
+
+    if (!res.body) {
+      throw new Error("Empty downloaded data");
+    }
+
+    await pipeline(
+      Readable.fromWeb(res.body),
+      fs.createWriteStream(to),
+    );
+}
 
 const request = async (opt) =>
     new Promise((resolve) => {
