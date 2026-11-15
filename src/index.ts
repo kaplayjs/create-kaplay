@@ -334,13 +334,9 @@ create(
         ),
         dir("public", [
             dir("sprites", []),
-            // TODO: Create this folders if only needed
-            dir("examples", [
-                dir("sprites", []),
-                dir("sounds", []),
-                dir("fonts", []),
-                dir("shaders", []),
-            ]),
+            dir("sounds", []),
+            dir("fonts", []),
+            dir("shaders", []),
         ]),
         dir("src", [file(`main.${ext}`, startCode)]),
         file("README.md", ""),
@@ -433,7 +429,7 @@ will create distributable native app package
 
 process.chdir(dest);
 
-info("- downloading example sprites");
+info("- downloading example asssets");
 
 for (const match of startCode.matchAll(assetsRegex)) {
     const [, type, name, url] = match;
@@ -459,7 +455,7 @@ for (const match of startCode.matchAll(assetsRegex)) {
         debug(`- ${type.toLowerCase()} full url: ${fullUrl}`);
 
         try {
-            await download(fullUrl, path.join("public", "examples", url));
+            await download(fullUrl, path.posix.join("public", url));
         } catch (error) {
             info(`- error while downloading ${type.toLowerCase()} "${name}"`);
             debug(`- error: ${error}`);

@@ -1,10 +1,10 @@
 {
+    "include": [
+      "./src/*"
+    ],
     "compilerOptions": {
         "module": "NodeNext",
         "allowImportingTsExtensions": true,
         "noEmit": true,
-        "typeRoots": [
-            "src/env.d.ts"
-        ]
     }
 }
