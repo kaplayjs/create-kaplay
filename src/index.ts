@@ -8,12 +8,12 @@ import {
 import mainJsContent from "./template/src/main.js?raw";
 import viteConfigContent from "./template/vite.config.js?raw";
 
-import cp from "node:child_process";
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
+import { spawn } from "cross-spawn";
 
 const VERSION = "3.1.0";
 
@@ -201,9 +201,8 @@ const exec = async (cmd, args, opts) => {
     debug(`- running ${cmd} ${args.join(" ")}`);
 
     return new Promise((resolve) => {
-        const proc = cp.spawn(cmd, args, {
+        const proc = spawn(cmd, args, {
             ...opts,
-            ...(isWindows ? { shell: true } : {}),
         });
 
         debug(`- spawned process ${proc.pid} ${cmd} ${args.join(" ")}`);
