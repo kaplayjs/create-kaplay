@@ -302,7 +302,7 @@ create(
                     build: `vite build`,
                     dev: `vite`,
                     preview: `vite preview`,
-                    zip: `${packageManager} run build && cd dist && zip-a-folder **/* game.zip -q`,
+                    zip: `${packageManager} run build && cd dist && zip-a-folder \"**/*\" game.zip -q`,
                     ...(ts
                         ? {
                               check: "tsc",
