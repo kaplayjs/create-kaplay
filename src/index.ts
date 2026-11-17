@@ -257,7 +257,7 @@ const pkgs = [`kaplay@${opts["version"] ?? "latest"}`];
 const devPkgs = [
     "vite@latest",
     "@types/node@latest",
-    "bestzip",
+    "zip-a-folder",
     ...(ts ? ["typescript@latest"] : []),
     ...(desktop ? ["@tauri-apps/cli@1"] : []),
 ];
@@ -302,7 +302,7 @@ create(
                     build: `vite build`,
                     dev: `vite`,
                     preview: `vite preview`,
-                    zip: `${packageManager} run build && cd dist && bestzip game.zip *`,
+                    zip: `${packageManager} run build && cd dist && zip-a-folder **/* game.zip -q`,
                     ...(ts
                         ? {
                               check: "tsc",
