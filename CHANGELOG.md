@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.1.6] - 2026-11-15
+## [3.1.6] - 2026-11-17
 
 ### Fixed
 
 - Fixed a bug in Windows where asset downloads were broken - @lajbel
 - Fixed a bug that made example assets not being stored correctly - @lajbel
+- Fixed a bug in Windows where `npm run zip` was broken - @lajbel
 
 ## [3.1.5] - 2026-04-23
 
